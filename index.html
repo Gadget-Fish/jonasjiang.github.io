@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jonas Jiang - Photography</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* Full Screen Hero */
+        .hero {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.3)),
+                linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* 
+            REPLACE WITH YOUR PHOTO:
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.3)),
+                url('your-hero-photo.jpg');
+            */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 2rem 3rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            color: white;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .motto {
+            font-size: 0.95rem;
+            font-weight: 300;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.95rem;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Content positioned in bottom area */
+        .hero-content {
+            position: absolute;
+            bottom: 4rem;
+            left: 3rem;
+            color: white;
+            max-width: 500px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 0.5s forwards;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modals/Overlays */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            margin: 2.5% auto;
+            background: rgba(26,26,26,0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .modal-header {
+            padding: 2rem 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .close-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        .modal-body {
+            padding: 3rem;
+            height: calc(100% - 120px);
+            overflow-y: auto;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #333;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        /* About Content */
+        .about-content {
+            color: white;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .about-photo {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        /* Blog Content */
+        .blog-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .blog-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .blog-date {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .blog-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .blog-excerpt {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+
+        /* Contact Content */
+        .contact-content {
+            color: white;
+            text-align: center;
+        }
+
+        .contact-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .contact-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1.5rem;
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .nav-menu {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-item {
+                font-size: 0.85rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .hero-content {
+                bottom: 2rem;
+                left: 1.5rem;
+                right: 1.5rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                height: 95%;
+                margin: 2.5% auto;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hide scrollbars for modal */
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Full Screen Hero -->
+    <div class="hero">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="logo-section">
+                <div class="logo">Jonas Jiang</div>
+                <div class="motto">Capturing moments that matter</div>
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-item" data-modal="gallery">Gallery</a>
+                <a href="#" class="nav-item" data-modal="about">About</a>
+                <a href="#" class="nav-item" data-modal="blog">Stories</a>
+                <a href="#" class="nav-item" data-modal="contact">Contact</a>
+            </div>
+        </nav>
+
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <h1 class="hero-title">Photography</h1>
+            <p class="hero-description">
+                Through my lens, I seek to capture the raw beauty and authentic moments 
+                that tell the stories of our world. Every frame is a window into a different 
+                perspective, a different emotion, a different truth.
+            </p>
+        </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div class="modal" id="gallery-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Photography Gallery</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <div class="gallery-placeholder">Mountain Landscape</div>
+                        <div class="gallery-overlay">
+                            <h4>Misty Mountains</h4>
+                            <p>Swiss Alps, Switzerland</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-placeholder">City Skyline</div>
+                        <div class="gallery-overlay">
+                            <h4>Urban Nights</h4>
+                            <p>Tokyo, Japan</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-placeholder">Ocean View</div>
+                        <div class="gallery-overlay">
+                            <h4>Endless Blue</h4>
+                            <p>Santorini, Greece</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-placeholder">Street Scene</div>
+                        <div class="gallery-overlay">
+                            <h4>Life in Motion</h4>
+                            <p>Mumbai, India</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-placeholder">Architecture</div>
+                        <div class="gallery-overlay">
+                            <h4>Modern Lines</h4>
+                            <p>Dubai, UAE</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-placeholder">Portrait</div>
+                        <div class="gallery-overlay">
+                            <h4>Human Stories</h4>
+                            <p>Local Markets</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal" id="about-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">About Jonas</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>My Journey</h3>
+                        <p>I'm a passionate photographer who believes that every moment has a story worth telling. My journey with photography began as a way to document my travels, but it quickly evolved into something much deeper.</p>
+                        
+                        <p>Through my work, I aim to capture not just the visual beauty of our world, but the emotions, cultures, and human connections that make each place unique. Every photograph is an invitation to see the world through a different lens.</p>
+                        
+                        <p>Based between multiple cities, I'm constantly exploring new places and meeting new people, always with my camera in hand, ready to capture those fleeting moments that tell the bigger story of our shared human experience.</p>
+                    </div>
+                    <div class="about-photo">
+                        Your Portrait Photo Here
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Modal -->
+    <div class="modal" id="blog-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Photo Stories</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="blog-grid">
+                    <article class="blog-item">
+                        <div class="blog-date">March 15, 2025</div>
+                        <h3 class="blog-title">Chasing Light in the Himalayas</h3>
+                        <p class="blog-excerpt">High in the mountains of Nepal, I discovered that the most beautiful light often comes just after the storm. This series captures those magical moments when clouds part and reveal the majesty beneath.</p>
+                    </article>
+                    
+                    <article class="blog-item">
+                        <div class="blog-date">February 28, 2025</div>
+                        <h3 class="blog-title">Urban Stories: Life in the Shadows</h3>
+                        <p class="blog-excerpt">Walking through the narrow alleys of old cities, I've learned that the most compelling stories often unfold in the spaces between the famous landmarks. These are the moments that reveal the true character of a place.</p>
+                    </article>
+                    
+                    <article class="blog-item">
+                        <div class="blog-date">January 12, 2025</div>
+                        <h3 class="blog-title">The Dance of Cultures</h3>
+                        <p class="blog-excerpt">From traditional festivals in remote villages to modern street art in bustling metropolises, I've been documenting how cultures evolve while maintaining their unique identities in our interconnected world.</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal" id="contact-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Let's Connect</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="contact-content">
+                    <h3>Get in Touch</h3>
+                    <p>I'm always excited to connect with fellow photographers, travelers, and anyone who shares a passion for visual storytelling.</p>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">📧</div>
+                            <h4>Email</h4>
+                            <p>jonas@example.com</p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">📷</div>
+                            <h4>Instagram</h4>
+                            <p>@jonasjiang_photo</p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">🌐</div>
+                            <h4>Website</h4>
+                            <p>jonasjiang.com</p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">📱</div>
+                            <h4>Phone</h4>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        const modals = document.querySelectorAll('.modal');
+        const navItems = document.querySelectorAll('.nav-item');
+        const closeBtns = document.querySelectorAll('.close-btn');
+
+        // Open modals
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const modalId = item.getAttribute('data-modal') + '-modal';
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
+
+        // Close modals
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+
+        // Close modal when clicking outside
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                modals.forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Gallery item click for lightbox (future enhancement)
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Future: implement lightbox for full-size image viewing
+                console.log('Gallery item clicked - lightbox functionality can be added here');
+            });
+        });
+    </script>
+</body>
+</html>
